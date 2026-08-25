@@ -41,7 +41,7 @@ window.addEventListener('DOMContentLoaded', () => {
   updateLivePreview();
 });
 
-// Ganti Tab Wi-Fi vs Link dengan Animasi Mulus
+// Ganti Tab Wi-Fi vs Link dengan Efek Pop-Up di Form Maupun Kartu Preview
 function switchTab(tab) {
   if (currentTab === tab) return;
   currentTab = tab;
@@ -49,16 +49,18 @@ function switchTab(tab) {
   const wifiForm = document.getElementById('form-wifi');
   const linkForm = document.getElementById('form-link');
   const segmentBtns = document.querySelectorAll('.segment-btn');
+  const cardMockup = document.getElementById('card-mockup');
 
   // Bersihkan class animasi sebelumnya
   wifiForm.classList.remove('tab-animating');
   linkForm.classList.remove('tab-animating');
+  cardMockup.classList.remove('mockup-pop');
 
   if (tab === 'wifi') {
     linkForm.style.display = 'none';
     wifiForm.style.display = 'block';
 
-    // Memicu browser agar memutar ulang animasi CSS (Reflow)
+    // Memicu browser agar memutar ulang animasi Form Kiri
     void wifiForm.offsetWidth;
     wifiForm.classList.add('tab-animating');
 
@@ -68,7 +70,7 @@ function switchTab(tab) {
     wifiForm.style.display = 'none';
     linkForm.style.display = 'block';
 
-    // Memicu browser agar memutar ulang animasi CSS (Reflow)
+    // Memicu browser agar memutar ulang animasi Form Kiri
     void linkForm.offsetWidth;
     linkForm.classList.add('tab-animating');
 
@@ -79,6 +81,10 @@ function switchTab(tab) {
       document.getElementById('link-url').value = 'https://maps.google.com';
     }
   }
+
+  // Memicu browser agar memutar ulang animasi Pop-Up pada Kartu Kanan
+  void cardMockup.offsetWidth;
+  cardMockup.classList.add('mockup-pop');
 
   updateLivePreview();
 }
@@ -99,6 +105,11 @@ function setTheme(themeKey) {
   cardMockup.style.borderColor = palette.border;
   banner.style.backgroundColor = palette.banner;
   mainText.style.color = palette.accent;
+
+  // Efek pop ringan saat ganti warna tema
+  cardMockup.classList.remove('mockup-pop');
+  void cardMockup.offsetWidth;
+  cardMockup.classList.add('mockup-pop');
 }
 
 // Update UI Mockup & Render Ulang QR Secara Real-Time
