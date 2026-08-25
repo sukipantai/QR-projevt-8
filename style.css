@@ -158,13 +158,23 @@ body {
   font-weight: 600;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.segment-btn:hover {
+  color: #ffffff;
 }
 
 .segment-btn.active {
   background: #1e293b;
   color: #ffffff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  transform: translateY(-1px);
+}
+
+/* Animasi Pergantian Tab Form */
+.form-group-wrapper {
+  animation: tabFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Inputs */
@@ -249,6 +259,11 @@ body {
   width: 16px;
   height: 16px;
   border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+
+.theme-chip:hover .chip-color {
+  transform: scale(1.15);
 }
 
 .theme-coffee .chip-color { background-color: #5d4037; }
@@ -405,7 +420,7 @@ body {
   border: 1px solid #e2e8f0;
 }
 
-/* Responsif untuk Smartphone */
+/* Responsif untuk Layar HP */
 @media (max-width: 840px) {
   .grid-container {
     grid-template-columns: 1fr;
@@ -417,9 +432,22 @@ body {
 }
 
 /* ===================================================
-   ANIMASI TIMBUL SAAT HALAMAN DIBUKA (ENTRANCE ANIMATION)
+   ANIMASI KEYFRAMES
    =================================================== */
 
+/* 1. Animasi Transisi Tab (Wi-Fi <-> Link) */
+@keyframes tabFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 2. Animasi Saat Halaman Pertama Kali Dibuka */
 @keyframes timbulNaik {
   0% {
     opacity: 0;
