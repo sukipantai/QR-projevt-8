@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Warung & Toko</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Library QR Code Generator Gratis via CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+  <div class="card">
+    <h2>Pembuat QR Code Warung</h2>
+    <p class="subtitle">Buat QR Wi-Fi dan Link toko instan & siap cetak</p>
+
+    <!-- Pilihan Tab Tipe QR -->
+    <div class="tab-container">
+      <button type="button" class="tab-btn active" onclick="switchTab('wifi')">Wi-Fi Warkop</button>
+      <button type="button" class="tab-btn" onclick="switchTab('link')">Link / URL</button>
+    </div>
+
+    <!-- Form Input Wi-Fi -->
+    <div id="form-wifi" class="form-section">
+      <label for="wifi-ssid">Nama Wi-Fi (SSID):</label>
+      <input type="text" id="wifi-ssid" placeholder="Contoh: Warkop Berkah Free">
+      
+      <label for="wifi-pass">Kata Sandi Wi-Fi:</label>
+      <input type="text" id="wifi-pass" placeholder="Contoh: kopihitam123">
+    </div>
+
+    <!-- Form Input Link / Maps / WA -->
+    <div id="form-link" class="form-section" style="display: none;">
+      <label for="link-url">Tautan / URL:</label>
+      <input type="url" id="link-url" placeholder="https://maps.app.goo.gl/... atau link WA">
+    </div>
+
+    <button type="button" class="btn-primary" onclick="generateQR()">Buat QR Code</button>
+
+    <!-- Area Output & Pengaturan Download -->
+    <div id="result-area" style="display: none;">
+      <div id="qrcode"></div>
+
+      <div class="theme-selector">
+        <label for="card-theme">Pilih Tema Kartu:</label>
+        <select id="card-theme">
+          <option value="coffee">Cokelat Kopi (Warkop / Kafe)</option>
+          <option value="green">Hijau Segar (Warung Makan)</option>
+          <option value="blue">Biru Modern (Elegan / Toko)</option>
+          <option value="dark">Hitam Klasik (Minimalis)</option>
+        </select>
+      </div>
+
+      <button type="button" class="btn-secondary" onclick="downloadQR()">Download Kartu Siap Cetak (PNG)</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
