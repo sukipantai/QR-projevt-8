@@ -3,57 +3,143 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QR Code Warung & Toko</title>
+  <title>QR Warung Pro - Generator Kartu Meja Siap Cetak</title>
+  <!-- Google Font: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- CSS Utama -->
   <link rel="stylesheet" href="style.css">
-  <!-- Library QR Code Generator Gratis via CDN -->
+  <!-- Library QR Code Generator -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 
-  <div class="card">
-    <h2>Pembuat QR Code Warung</h2>
-    <p class="subtitle">Buat QR Wi-Fi dan Link toko instan & siap cetak</p>
+  <div class="bg-decoration"></div>
 
-    <!-- Pilihan Tab Tipe QR -->
-    <div class="tab-container">
-      <button type="button" class="tab-btn active" onclick="switchTab('wifi')">Wi-Fi Warkop</button>
-      <button type="button" class="tab-btn" onclick="switchTab('link')">Link / URL</button>
-    </div>
-
-    <!-- Form Input Wi-Fi -->
-    <div id="form-wifi" class="form-section">
-      <label for="wifi-ssid">Nama Wi-Fi (SSID):</label>
-      <input type="text" id="wifi-ssid" placeholder="Contoh: Warkop Berkah Free">
-      
-      <label for="wifi-pass">Kata Sandi Wi-Fi:</label>
-      <input type="text" id="wifi-pass" placeholder="Contoh: kopihitam123">
-    </div>
-
-    <!-- Form Input Link / Maps / WA -->
-    <div id="form-link" class="form-section" style="display: none;">
-      <label for="link-url">Tautan / URL:</label>
-      <input type="url" id="link-url" placeholder="https://maps.app.goo.gl/... atau link WA">
-    </div>
-
-    <button type="button" class="btn-primary" onclick="generateQR()">Buat QR Code</button>
-
-    <!-- Area Output & Pengaturan Download -->
-    <div id="result-area" style="display: none;">
-      <div id="qrcode"></div>
-
-      <div class="theme-selector">
-        <label for="card-theme">Pilih Tema Kartu:</label>
-        <select id="card-theme">
-          <option value="coffee">Cokelat Kopi (Warkop / Kafe)</option>
-          <option value="green">Hijau Segar (Warung Makan)</option>
-          <option value="blue">Biru Modern (Elegan / Toko)</option>
-          <option value="dark">Hitam Klasik (Minimalis)</option>
-        </select>
+  <main class="app-wrapper">
+    <!-- Header -->
+    <header class="main-header">
+      <div class="badge-pill">
+        <span class="pulse-dot"></span> 100% Gratis, Permanen & Tanpa Login
       </div>
+      <h1>QR Warung <span>Pro</span></h1>
+      <p>Buat kartu meja Wi-Fi dan Link toko berkualitas tinggi siap cetak dalam hitungan detik.</p>
+    </header>
 
-      <button type="button" class="btn-secondary" onclick="downloadQR()">Download Kartu Siap Cetak (PNG)</button>
+    <!-- Main Grid: Form Panel (Kiri) & Live Preview (Kanan) -->
+    <div class="grid-container">
+      
+      <!-- Panel Input / Kontrol -->
+      <section class="control-panel">
+        
+        <!-- Tab Selector -->
+        <div class="segmented-control">
+          <button type="button" class="segment-btn active" onclick="switchTab('wifi')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+            Wi-Fi Warkop
+          </button>
+          <button type="button" class="segment-btn" onclick="switchTab('link')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            Link / URL Toko
+          </button>
+        </div>
+
+        <!-- Form Wi-Fi -->
+        <div id="form-wifi" class="form-group-wrapper">
+          <div class="input-block">
+            <label for="wifi-ssid">Nama Wi-Fi (SSID)</label>
+            <div class="input-box">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg>
+              <input type="text" id="wifi-ssid" placeholder="Contoh: Warkop Berkah Free" oninput="updateLivePreview()">
+            </div>
+          </div>
+
+          <div class="input-block">
+            <label for="wifi-pass">Kata Sandi Wi-Fi</label>
+            <div class="input-box">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <input type="text" id="wifi-pass" placeholder="Biarkan kosong jika tanpa sandi" oninput="updateLivePreview()">
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Link -->
+        <div id="form-link" class="form-group-wrapper" style="display: none;">
+          <div class="input-block">
+            <label for="link-url">Tautan (Website / Maps / WhatsApp)</label>
+            <div class="input-box">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              <input type="url" id="link-url" placeholder="https://maps.app.goo.gl/..." oninput="updateLivePreview()">
+            </div>
+          </div>
+        </div>
+
+        <!-- Pemilih Tema Warna (Color Swatches) -->
+        <div class="theme-section">
+          <label class="section-label">Pilih Tema Desain Kartu</label>
+          <div class="theme-grid">
+            <label class="theme-chip theme-coffee active" onclick="setTheme('coffee')">
+              <input type="radio" name="theme" value="coffee" checked>
+              <span class="chip-color"></span>
+              <span class="chip-text">Warkop Klasik</span>
+            </label>
+            <label class="theme-chip theme-emerald" onclick="setTheme('emerald')">
+              <input type="radio" name="theme" value="emerald">
+              <span class="chip-color"></span>
+              <span class="chip-text">Warung Segar</span>
+            </label>
+            <label class="theme-chip theme-ocean" onclick="setTheme('ocean')">
+              <input type="radio" name="theme" value="ocean">
+              <span class="chip-color"></span>
+              <span class="chip-text">Modern Biru</span>
+            </label>
+            <label class="theme-chip theme-midnight" onclick="setTheme('midnight')">
+              <input type="radio" name="theme" value="midnight">
+              <span class="chip-color"></span>
+              <span class="chip-text">Dark Elegan</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Tombol Download -->
+        <button type="button" class="btn-download" onclick="downloadHDCard()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download Kartu HD Siap Cetak (PNG)
+        </button>
+      </section>
+
+      <!-- Panel Live Preview (Kanan) -->
+      <section class="preview-panel">
+        <div class="preview-header">
+          <span>Live Preview Cetak</span>
+          <span class="preview-tag">Rasio 3:4 (A6 / Akrilik Meja)</span>
+        </div>
+
+        <!-- Visual Mockup Kartu -->
+        <div id="card-mockup" class="card-mockup theme-coffee">
+          <div class="mockup-banner">
+            <h3 id="mock-header-title">SCAN WI-FI DI SINI</h3>
+            <p id="mock-header-sub">Hubungkan internet otomatis tanpa ketik</p>
+          </div>
+
+          <div class="mockup-qr-box">
+            <div id="qrcode-render"></div>
+          </div>
+
+          <div class="mockup-footer">
+            <p class="mock-primary-text" id="mock-footer-main">Wi-Fi: Warkop Berkah Free</p>
+            <p class="mock-secondary-text" id="mock-footer-sub">Password: kopihitam123</p>
+            <div class="mock-tip">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              Arahkan kamera HP / Google Lens
+            </div>
+          </div>
+        </div>
+      </section>
+
     </div>
-  </div>
+  </main>
 
   <script src="script.js"></script>
 </body>
