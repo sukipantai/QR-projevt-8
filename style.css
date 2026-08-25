@@ -172,7 +172,7 @@ body {
   transform: scale(1.02);
 }
 
-/* Class Animasi Khusus Tab yang dipicu oleh JavaScript */
+/* Animasi Form Kiri saat Ganti Tab */
 .tab-animating {
   animation: tabSlideIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -352,6 +352,11 @@ body {
   transition: border-color 0.3s ease;
 }
 
+/* Animasi Pop Up Kartu Mockup Saat Ganti Tab */
+.mockup-pop {
+  animation: cardMockupPop 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 .mockup-banner {
   width: 100%;
   background: var(--theme-coffee-banner);
@@ -381,9 +386,9 @@ body {
   align-items: center;
 }
 
-/* Efek Halus Saat Gambar QR Terganti */
+/* Animasi QR Code */
 .qr-pop {
-  animation: qrPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: qrPop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 #qrcode-render img, #qrcode-render canvas {
@@ -425,7 +430,7 @@ body {
   border: 1px solid #e2e8f0;
 }
 
-/* Responsif untuk Layar HP */
+/* Responsif untuk Smartphone */
 @media (max-width: 840px) {
   .grid-container {
     grid-template-columns: 1fr;
@@ -440,11 +445,11 @@ body {
    ANIMASI KEYFRAMES
    =================================================== */
 
-/* 1. Animasi Slide Halus Setiap Tab Diklik */
+/* 1. Animasi Slide Form */
 @keyframes tabSlideIn {
   0% {
     opacity: 0;
-    transform: translateY(14px) scale(0.97);
+    transform: translateY(12px) scale(0.98);
   }
   100% {
     opacity: 1;
@@ -452,11 +457,26 @@ body {
   }
 }
 
-/* 2. Animasi Membal Halus QR Code Saat Berubah */
+/* 2. Animasi POP UP Kartu Preview Kanan */
+@keyframes cardMockupPop {
+  0% {
+    opacity: 0.8;
+    transform: scale(0.94) translateY(8px);
+  }
+  60% {
+    transform: scale(1.03) translateY(-3px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* 3. Animasi Pop QR Code */
 @keyframes qrPop {
   0% {
-    opacity: 0.4;
-    transform: scale(0.94);
+    opacity: 0.3;
+    transform: scale(0.9);
   }
   100% {
     opacity: 1;
@@ -464,7 +484,7 @@ body {
   }
 }
 
-/* 3. Animasi Saat Halaman Pertama Dibuka */
+/* 4. Animasi Saat Halaman Pertama Dibuka */
 @keyframes timbulNaik {
   0% {
     opacity: 0;
