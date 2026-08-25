@@ -41,28 +41,45 @@ window.addEventListener('DOMContentLoaded', () => {
   updateLivePreview();
 });
 
-// Ganti Tab Wi-Fi vs Link
+// Ganti Tab Wi-Fi vs Link dengan Animasi Mulus
 function switchTab(tab) {
+  if (currentTab === tab) return;
   currentTab = tab;
+
   const wifiForm = document.getElementById('form-wifi');
   const linkForm = document.getElementById('form-link');
   const segmentBtns = document.querySelectorAll('.segment-btn');
 
+  // Bersihkan class animasi sebelumnya
+  wifiForm.classList.remove('tab-animating');
+  linkForm.classList.remove('tab-animating');
+
   if (tab === 'wifi') {
-    wifiForm.style.display = 'block';
     linkForm.style.display = 'none';
+    wifiForm.style.display = 'block';
+
+    // Memicu browser agar memutar ulang animasi CSS (Reflow)
+    void wifiForm.offsetWidth;
+    wifiForm.classList.add('tab-animating');
+
     segmentBtns[0].classList.add('active');
     segmentBtns[1].classList.remove('active');
   } else {
     wifiForm.style.display = 'none';
     linkForm.style.display = 'block';
+
+    // Memicu browser agar memutar ulang animasi CSS (Reflow)
+    void linkForm.offsetWidth;
+    linkForm.classList.add('tab-animating');
+
     segmentBtns[0].classList.remove('active');
     segmentBtns[1].classList.add('active');
-    
+
     if (!document.getElementById('link-url').value) {
-      document.getElementById('link-url').value = 'https://instagram.com';
+      document.getElementById('link-url').value = 'https://maps.google.com';
     }
   }
+
   updateLivePreview();
 }
 
@@ -104,7 +121,7 @@ function updateLivePreview() {
 
     qrPayload = `WIFI:S:${ssid};T:WPA;P:${pass};;`;
   } else {
-    const url = document.getElementById('link-url').value.trim() || 'https://google.com';
+    const url = document.getElementById('link-url').value.trim() || 'https://maps.google.com';
 
     titleEl.textContent = 'PINDAI KODE QR';
     subEl.textContent = 'Arahkan kamera HP ke kode di bawah';
@@ -114,9 +131,12 @@ function updateLivePreview() {
     qrPayload = url;
   }
 
-  // Render QR Code di Mockup
+  // Render QR Code di Mockup dengan Animasi Pop
   const qrContainer = document.getElementById('qrcode-render');
   qrContainer.innerHTML = '';
+  qrContainer.classList.remove('qr-pop');
+  void qrContainer.offsetWidth;
+  qrContainer.classList.add('qr-pop');
 
   qrCodeInstance = new QRCode(qrContainer, {
     text: qrPayload,
@@ -140,7 +160,7 @@ function downloadHDCard() {
 
   const palette = THEME_PALETTES[currentTheme];
 
-  // Siapkan Kanvas HD (2x Rasio Standar agar hasil print tajam tidak pecah)
+  // Siapkan Kanvas HD (800 x 1080 px agar cetakan tajam)
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
   canvas.width = 800;
