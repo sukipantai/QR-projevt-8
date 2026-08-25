@@ -138,9 +138,9 @@ body {
   display: flex;
   background: #0d1322;
   border: 1px solid var(--input-border);
-  padding: 4px;
+  padding: 5px;
   border-radius: 12px;
-  gap: 4px;
+  gap: 6px;
   margin-bottom: 24px;
 }
 
@@ -168,13 +168,13 @@ body {
 .segment-btn.active {
   background: #1e293b;
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
-  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  transform: scale(1.02);
 }
 
-/* Animasi Pergantian Tab Form */
-.form-group-wrapper {
-  animation: tabFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+/* Class Animasi Khusus Tab yang dipicu oleh JavaScript */
+.tab-animating {
+  animation: tabSlideIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Inputs */
@@ -381,6 +381,11 @@ body {
   align-items: center;
 }
 
+/* Efek Halus Saat Gambar QR Terganti */
+.qr-pop {
+  animation: qrPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 #qrcode-render img, #qrcode-render canvas {
   border-radius: 6px;
 }
@@ -435,11 +440,11 @@ body {
    ANIMASI KEYFRAMES
    =================================================== */
 
-/* 1. Animasi Transisi Tab (Wi-Fi <-> Link) */
-@keyframes tabFadeIn {
+/* 1. Animasi Slide Halus Setiap Tab Diklik */
+@keyframes tabSlideIn {
   0% {
     opacity: 0;
-    transform: translateY(8px) scale(0.98);
+    transform: translateY(14px) scale(0.97);
   }
   100% {
     opacity: 1;
@@ -447,7 +452,19 @@ body {
   }
 }
 
-/* 2. Animasi Saat Halaman Pertama Kali Dibuka */
+/* 2. Animasi Membal Halus QR Code Saat Berubah */
+@keyframes qrPop {
+  0% {
+    opacity: 0.4;
+    transform: scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 3. Animasi Saat Halaman Pertama Dibuka */
 @keyframes timbulNaik {
   0% {
     opacity: 0;
