@@ -1,174 +1,213 @@
 let currentTab = 'wifi';
-let qrInstance = null;
+let currentTheme = 'coffee';
+let qrCodeInstance = null;
 
-// Fungsi mengganti tab input
+// Konfigurasi Palet Warna HD untuk Canvas & Preview
+const THEME_PALETTES = {
+  coffee: {
+    banner: '#3e2723',
+    bannerText: '#f5ebe0',
+    border: '#5d4037',
+    accent: '#5d4037',
+    name: 'Warkop Klasik'
+  },
+  emerald: {
+    banner: '#064e3b',
+    bannerText: '#ffffff',
+    border: '#047857',
+    accent: '#047857',
+    name: 'Warung Segar'
+  },
+  ocean: {
+    banner: '#0c4a6e',
+    bannerText: '#ffffff',
+    border: '#0284c7',
+    accent: '#0369a1',
+    name: 'Modern Biru'
+  },
+  midnight: {
+    banner: '#0f172a',
+    bannerText: '#ffffff',
+    border: '#334155',
+    accent: '#1e293b',
+    name: 'Dark Elegan'
+  }
+};
+
+// Inisialisasi saat web pertama kali dibuka
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('wifi-ssid').value = 'Warkop Berkah Free';
+  document.getElementById('wifi-pass').value = 'kopihitam123';
+  updateLivePreview();
+});
+
+// Ganti Tab Wi-Fi vs Link
 function switchTab(tab) {
   currentTab = tab;
   const wifiForm = document.getElementById('form-wifi');
   const linkForm = document.getElementById('form-link');
-  const tabBtns = document.querySelectorAll('.tab-btn');
+  const segmentBtns = document.querySelectorAll('.segment-btn');
 
   if (tab === 'wifi') {
     wifiForm.style.display = 'block';
     linkForm.style.display = 'none';
-    tabBtns[0].classList.add('active');
-    tabBtns[1].classList.remove('active');
+    segmentBtns[0].classList.add('active');
+    segmentBtns[1].classList.remove('active');
   } else {
     wifiForm.style.display = 'none';
     linkForm.style.display = 'block';
-    tabBtns[0].classList.remove('active');
-    tabBtns[1].classList.add('active');
+    segmentBtns[0].classList.remove('active');
+    segmentBtns[1].classList.add('active');
+    
+    if (!document.getElementById('link-url').value) {
+      document.getElementById('link-url').value = 'https://instagram.com';
+    }
   }
+  updateLivePreview();
 }
 
-// Fungsi generate QR Code
-function generateQR() {
-  let qrText = '';
-
-  if (currentTab === 'wifi') {
-    const ssid = document.getElementById('wifi-ssid').value.trim();
-    const pass = document.getElementById('wifi-pass').value.trim();
-
-    if (!ssid) {
-      alert('Mohon isi nama Wi-Fi');
-      return;
-    }
-    // Protokol standar Wi-Fi untuk Android & iOS
-    qrText = `WIFI:S:${ssid};T:WPA;P:${pass};;`;
-  } else {
-    const link = document.getElementById('link-url').value.trim();
-    if (!link) {
-      alert('Mohon isi link/URL');
-      return;
-    }
-    qrText = link;
-  }
-
-  // Bersihkan QR Code lama
-  const qrContainer = document.getElementById('qrcode');
-  qrContainer.innerHTML = '';
-
-  // Render QR Code baru
-  qrInstance = new QRCode(qrContainer, {
-    text: qrText,
-    width: 200,
-    height: 200,
-    colorDark: "#000000",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H
+// Ganti Tema Warna
+function setTheme(themeKey) {
+  currentTheme = themeKey;
+  const themeChips = document.querySelectorAll('.theme-chip');
+  themeChips.forEach(chip => {
+    chip.classList.toggle('active', chip.classList.contains(`theme-${themeKey}`));
   });
 
-  // Tampilkan container hasil
-  document.getElementById('result-area').style.display = 'flex';
+  const palette = THEME_PALETTES[themeKey];
+  const cardMockup = document.getElementById('card-mockup');
+  const banner = cardMockup.querySelector('.mockup-banner');
+  const mainText = document.getElementById('mock-footer-main');
+
+  cardMockup.style.borderColor = palette.border;
+  banner.style.backgroundColor = palette.banner;
+  mainText.style.color = palette.accent;
 }
 
-// Fungsi membuat gambar kartu siap cetak dan mengunduhnya
-function downloadQR() {
-  const qrContainer = document.getElementById('qrcode');
-  const qrCanvas = qrContainer.querySelector('canvas');
-  const qrImg = qrContainer.querySelector('img');
+// Update UI Mockup & Render Ulang QR Secara Real-Time
+function updateLivePreview() {
+  let qrPayload = '';
+  const titleEl = document.getElementById('mock-header-title');
+  const subEl = document.getElementById('mock-header-sub');
+  const mainTextEl = document.getElementById('mock-footer-main');
+  const secTextEl = document.getElementById('mock-footer-sub');
 
-  const qrSource = qrCanvas || qrImg;
+  if (currentTab === 'wifi') {
+    const ssid = document.getElementById('wifi-ssid').value.trim() || 'Nama Wi-Fi';
+    const pass = document.getElementById('wifi-pass').value.trim();
+
+    titleEl.textContent = 'SCAN WI-FI DI SINI';
+    subEl.textContent = 'Hubungkan internet otomatis tanpa ketik';
+    mainTextEl.textContent = `Wi-Fi: ${ssid}`;
+    secTextEl.textContent = pass ? `Password: ${pass}` : 'Password: (Tanpa Sandi)';
+    secTextEl.style.display = 'block';
+
+    qrPayload = `WIFI:S:${ssid};T:WPA;P:${pass};;`;
+  } else {
+    const url = document.getElementById('link-url').value.trim() || 'https://google.com';
+
+    titleEl.textContent = 'PINDAI KODE QR';
+    subEl.textContent = 'Arahkan kamera HP ke kode di bawah';
+    mainTextEl.textContent = 'Selamat Datang!';
+    secTextEl.textContent = 'Katalog & Layanan Online';
+
+    qrPayload = url;
+  }
+
+  // Render QR Code di Mockup
+  const qrContainer = document.getElementById('qrcode-render');
+  qrContainer.innerHTML = '';
+
+  qrCodeInstance = new QRCode(qrContainer, {
+    text: qrPayload,
+    width: 170,
+    height: 170,
+    colorDark: '#000000',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.H
+  });
+}
+
+// Download Kartu High-Definition (Resolusi Tinggi 800 x 1080 px untuk Cetak Tajam)
+function downloadHDCard() {
+  const qrContainer = document.getElementById('qrcode-render');
+  const qrSource = qrContainer.querySelector('canvas') || qrContainer.querySelector('img');
+
   if (!qrSource) {
-    alert('Silakan buat QR Code terlebih dahulu.');
+    alert('QR Code belum siap diunduh.');
     return;
   }
 
-  // Daftar tema warna
-  const selectedTheme = document.getElementById('card-theme').value;
-  const themeColors = {
-    coffee: {
-      border: '#6f4e37',
-      banner: '#4a3525',
-      bannerText: '#f5ebe0',
-      accent: '#6f4e37'
-    },
-    green: {
-      border: '#2e7d32',
-      banner: '#1b5e20',
-      bannerText: '#ffffff',
-      accent: '#2e7d32'
-    },
-    blue: {
-      border: '#1565c0',
-      banner: '#0d47a1',
-      bannerText: '#ffffff',
-      accent: '#1565c0'
-    },
-    dark: {
-      border: '#222222',
-      banner: '#222222',
-      bannerText: '#ffffff',
-      accent: '#333333'
-    }
-  };
+  const palette = THEME_PALETTES[currentTheme];
 
-  const theme = themeColors[selectedTheme];
+  // Siapkan Kanvas HD (2x Rasio Standar agar hasil print tajam tidak pecah)
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = 800;
+  canvas.height = 1080;
 
-  // Siapkan canvas kartu virtual (400 x 540 piksel)
-  const cardCanvas = document.createElement('canvas');
-  const ctx = cardCanvas.getContext('2d');
-  cardCanvas.width = 400;
-  cardCanvas.height = 540;
-
-  // 1. Latar belakang kartu
+  // 1. Background Putih Bersih
   ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, cardCanvas.width, cardCanvas.height);
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // 2. Banner Atas
-  ctx.fillStyle = theme.banner;
-  ctx.fillRect(12, 12, cardCanvas.width - 24, 85);
+  // 2. Banner Header Berwarna
+  ctx.fillStyle = palette.banner;
+  ctx.fillRect(24, 24, canvas.width - 48, 170);
 
-  // 3. Garis Bingkai
-  ctx.strokeStyle = theme.border;
-  ctx.lineWidth = 4;
-  ctx.strokeRect(12, 12, cardCanvas.width - 24, cardCanvas.height - 24);
+  // 3. Garis Bingkai Luar
+  ctx.strokeStyle = palette.border;
+  ctx.lineWidth = 8;
+  ctx.strokeRect(24, 24, canvas.width - 48, canvas.height - 48);
 
   // 4. Teks Header
   ctx.textAlign = 'center';
-  ctx.fillStyle = theme.bannerText;
-  ctx.font = 'bold 20px Arial';
+  ctx.fillStyle = palette.bannerText;
+  ctx.font = 'bold 40px Plus Jakarta Sans, Arial';
 
   if (currentTab === 'wifi') {
-    ctx.fillText('SCAN WI-FI DI SINI', 200, 50);
-    ctx.font = '13px Arial';
-    ctx.fillText('Hubungkan internet otomatis tanpa ketik', 200, 75);
+    ctx.fillText('SCAN WI-FI DI SINI', 400, 100);
+    ctx.font = '24px Plus Jakarta Sans, Arial';
+    ctx.fillText('Hubungkan internet otomatis tanpa ketik', 400, 148);
   } else {
-    ctx.fillText('PINDAI KODE QR', 200, 50);
-    ctx.font = '13px Arial';
-    ctx.fillText('Arahkan kamera HP Anda ke kode di bawah', 200, 75);
+    ctx.fillText('PINDAI KODE QR', 400, 100);
+    ctx.font = '24px Plus Jakarta Sans, Arial';
+    ctx.fillText('Arahkan kamera HP ke kode di bawah', 400, 148);
   }
 
-  // 5. Render Gambar QR Code di Tengah
-  ctx.drawImage(qrSource, 75, 120, 250, 250);
+  // 5. Render Gambar QR Code di Tengah Kanvas
+  ctx.drawImage(qrSource, 150, 240, 500, 500);
 
   // 6. Footer Info
   if (currentTab === 'wifi') {
-    const ssid = document.getElementById('wifi-ssid').value.trim();
+    const ssid = document.getElementById('wifi-ssid').value.trim() || 'Nama Wi-Fi';
     const pass = document.getElementById('wifi-pass').value.trim();
 
-    ctx.fillStyle = theme.accent;
-    ctx.font = 'bold 16px Arial';
-    ctx.fillText(`Wi-Fi: ${ssid}`, 200, 405);
+    ctx.fillStyle = palette.accent;
+    ctx.font = 'bold 34px Plus Jakarta Sans, Arial';
+    ctx.fillText(`Wi-Fi: ${ssid}`, 400, 810);
 
-    ctx.fillStyle = '#444444';
-    ctx.font = '14px Arial';
-    ctx.fillText(`Password: ${pass || '(Tanpa Sandi)'}`, 200, 435);
+    ctx.fillStyle = '#475569';
+    ctx.font = '28px Plus Jakarta Sans, Arial';
+    ctx.fillText(`Password: ${pass || '(Tanpa Sandi)'}`, 400, 865);
   } else {
-    ctx.fillStyle = theme.accent;
-    ctx.font = 'bold 16px Arial';
-    ctx.fillText('Terima Kasih atas Kunjungan Anda!', 200, 420);
+    ctx.fillStyle = palette.accent;
+    ctx.font = 'bold 34px Plus Jakarta Sans, Arial';
+    ctx.fillText('Terima Kasih atas Kunjungan Anda!', 400, 825);
+
+    ctx.fillStyle = '#475569';
+    ctx.font = '26px Plus Jakarta Sans, Arial';
+    ctx.fillText('Katalog Menu & Info Pemesanan', 400, 875);
   }
 
-  // Catatan kaki
-  ctx.font = 'italic 11px Arial';
-  ctx.fillStyle = '#888888';
-  ctx.fillText('Buka kamera HP atau Google Lens untuk memindai', 200, 500);
+  // Catatan Kaki Kecil
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = 'italic 20px Plus Jakarta Sans, Arial';
+  ctx.fillText('Buka kamera HP atau Google Lens untuk memindai', 400, 980);
 
-  // 7. Eksekusi Unduhan PNG
+  // 7. Eksekusi Download PNG
   const downloadLink = document.createElement('a');
-  downloadLink.href = cardCanvas.toDataURL('image/png');
-  downloadLink.download = `kartu-qr-${selectedTheme}-${currentTab}.png`;
+  downloadLink.href = canvas.toDataURL('image/png', 1.0);
+  downloadLink.download = `kartu-qr-${currentTheme}-${currentTab}.png`;
   document.body.appendChild(downloadLink);
   downloadLink.click();
   document.body.removeChild(downloadLink);
